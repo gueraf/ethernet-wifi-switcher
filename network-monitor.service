@@ -1,0 +1,14 @@
+[Unit]
+Description=Dynamic Network Priority Manager
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/usr/local/bin/network-monitor.py
+
+[Install]
+WantedBy=multi-user.target
