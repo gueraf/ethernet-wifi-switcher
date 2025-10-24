@@ -20,14 +20,25 @@ def find_interfaces():
         result = subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=CMD_TIMEOUT)
         
         devices = result.stdout.strip().split('\n')
-        ethernet_devices = [line.split(':')[1] for line in devices if line.startswith('ethernet:connected')]
+        
+        ethernet_devices = []
+        wifi_devices = []
+        for line in devices:
+            parts = line.split(':')
+            if len(parts) >= 3:
+                dev_type, dev_name, dev_state = parts[0], parts[1], parts[2]
+                if dev_state.startswith('connected'):
+                    if dev_type == 'ethernet':
+                        ethernet_devices.append(dev_name)
+                    elif dev_type == 'wifi':
+                        wifi_devices.append(dev_name)
+
         if len(ethernet_devices) == 1:
             eth_iface = ethernet_devices[0]
         else:
             if len(ethernet_devices) > 1:
                 print(f"Heuristic warning: Found {len(ethernet_devices)} active ethernet devices. Expected 1.", flush=True)
 
-        wifi_devices = [line.split(':')[1] for line in devices if line.startswith('wifi:connected')]
         if len(wifi_devices) == 1:
             wifi_iface = wifi_devices[0]
         else:
