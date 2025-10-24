@@ -32,6 +32,9 @@ def find_interfaces():
                         ethernet_devices.append(dev_name)
                     elif dev_type == 'wifi':
                         wifi_devices.append(dev_name)
+                else:
+                    if dev_type in ['ethernet', 'wifi']:
+                        print(f"Debug: Interface ''{dev_name}'' ({dev_type}) filtered out due to state: ''{dev_state}''", flush=True)
 
         if len(ethernet_devices) == 1:
             eth_iface = ethernet_devices[0]
