@@ -45,15 +45,12 @@ def find_interfaces():
             if len(wifi_devices) > 1:
                 print(f"Heuristic warning: Found {len(wifi_devices)} active wifi devices. Expected 1.", flush=True)
             
-        if eth_iface and wifi_iface:
-            return eth_iface, wifi_iface
-        
     except subprocess.TimeoutExpired:
         print(f"Error: Command '{' '.join(cmd)}' timed out after {CMD_TIMEOUT} seconds.", flush=True)
     except (subprocess.CalledProcessError, FileNotFoundError) as e:
         print(f"Error finding interfaces with nmcli: {e}", flush=True)
     
-    return None, None
+    return eth_iface, wifi_iface
 
 def get_gateway_and_metric(interface):
     """Gets the gateway and metric for a given interface using `ip -j route`."""
@@ -117,7 +114,7 @@ def main():
         eth_iface, wifi_iface = find_interfaces()
 
         if not (eth_iface and wifi_iface):
-            print("Heuristic failed. Retrying in 5 minutes...", flush=True)
+            print(f"Heuristic failed. eth_iface='{eth_iface}', wifi_iface='{wifi_iface}'. Retrying in 5 minutes...", flush=True)
             time.sleep(300)
             continue
         
